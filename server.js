@@ -8,39 +8,6 @@ const { URL } = require('url');
 const app = express();
 const port = 3000;
 
-// Step 3: Homepage (/) ke liye route
-app.get('/', (req, res) => {
-    res.send(`
-        <!DOCTYPE html>
-        <html lang="hi">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Ad-Blocking Proxy</title>
-            <style>
-                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f0f2f5; }
-                .container { background: white; padding: 2rem 3rem; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); text-align: center; max-width: 500px; }
-                h1 { color: #333; }
-                p { color: #666; }
-                input[type="url"] { width: 100%; padding: 12px; margin-top: 1rem; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-                button { width: 100%; padding: 12px; border: none; background: linear-gradient(45deg, #007bff, #0056b3); color: white; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; }
-                button:hover { opacity: 0.9; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h1>Proxy Server</h1>
-                <p>Yahan woh website URL daalein jiske ads aap block karna chahte hain.</p>
-                <form action="/proxy" method="get" target="_blank">
-                    <input type="url" name="url" value="https://movearnpre.com/embed/mrchmq892z9h" required>
-                    <button type="submit">Website Kholein</button>
-                </form>
-            </div>
-        </body>
-        </html>
-    `);
-});
-
 // Step 4: Asli proxy logic ke liye route (/proxy)
 app.get('/proxy', async (req, res) => {
     const targetUrl = req.query.url;
@@ -75,6 +42,7 @@ app.get('/proxy', async (req, res) => {
             'paupsoborofoow.net/tag.min.js',  // Naya script block kiya
             '/assets/jquery/p1anime.js?v=1'
         ];
+        blockedScriptSources.push('paupsoborofoow.net');
 
         $('script').each((index, element) => {
             const scriptSrc = $(element).attr('src');
@@ -119,6 +87,30 @@ app.get('/proxy', async (req, res) => {
         const pageUrl = new URL(targetUrl);
         $('head').prepend(`<base href="${pageUrl.href}">`);
 
+        // CSP sandbox header lagana (popups/new-tabs ko block karne ke liye)
+
+        // Client-side script inject karna to override window.open and block <a target="_blank">
+        $('head').prepend(`
+          <script>
+            // new tab/popup ki har call ko no-op bana do
+            window.open = () => null;
+
+            // Agar kahin <a target="_blank"> bach bhi gaya ho, use bhi rok do
+            document.addEventListener('click', function(e) {
+              let el = e.target;
+              while (el && el !== document) {
+                if (el.tagName === 'A' && el.target === '_blank') {
+                  e.preventDefault();
+                  // Agar chaho to usi tab mein navigate karwa sakte ho:
+                  // window.location.href = el.href;
+                  break;
+                }
+                el = el.parentElement;
+              }
+            }, true);
+          </script>
+        `);
+
         // Step 9: Saaf kiya hua HTML browser ko bhejna
         res.send($.html());
 
@@ -131,5 +123,5 @@ app.get('/proxy', async (req, res) => {
 // Step 10: Server ko start karna
 app.listen(port, () => {
     console.log(`Proxy server http://localhost:${port} par chal raha hai`);
-    
 });
+// Team Mantecion Dev 
