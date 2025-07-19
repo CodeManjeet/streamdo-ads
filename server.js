@@ -71,7 +71,8 @@ app.get('/proxy', async (req, res) => {
             'cz.dyedmurders.com',  // Yeh pehle se tha
             'dyedmurders.com',  // Domain ko bhi block karne ke liye add kiya
             'tag.min.js',  // Specific file ko block karne ke liye
-            'gpPTLMM0BJiUY6TQ'  // Specific path ko block karne ke liye
+            'gpPTLMM0BJiUY6TQ',  // Specific path ko block karne ke liye
+            'paupsoborofoow.net/tag.min.js'  // Naya script block kiya
         ];
 
         $('script').each((index, element) => {
@@ -129,4 +130,5 @@ app.get('/proxy', async (req, res) => {
 // Step 10: Server ko start karna
 app.listen(port, () => {
     console.log(`Proxy server http://localhost:${port} par chal raha hai`);
+    
 });
