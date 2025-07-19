@@ -72,7 +72,8 @@ app.get('/proxy', async (req, res) => {
             'dyedmurders.com',  // Domain ko bhi block karne ke liye add kiya
             'tag.min.js',  // Specific file ko block karne ke liye
             'gpPTLMM0BJiUY6TQ',  // Specific path ko block karne ke liye
-            'paupsoborofoow.net/tag.min.js'  // Naya script block kiya
+            'paupsoborofoow.net/tag.min.js',  // Naya script block kiya
+            '/assets/jquery/p1anime.js?v=1'
         ];
 
         $('script').each((index, element) => {
