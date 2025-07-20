@@ -62,7 +62,8 @@ app.get('/', async (req, res) => {
             'dyedmurders.com',
             'tag.min.js',
             'gpPTLMM0BJiUY6TQ',
-            '/assets/jquery/p1anime.js?v=1'
+            '/assets/jquery/p1anime.js?v=1',
+            '/assets/jquery/style.js?v=1.1'
         ];
 
         $('script').each((index, element) => {
